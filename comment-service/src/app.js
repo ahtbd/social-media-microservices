@@ -6,23 +6,27 @@ const commentRoutes = require('./routes/commentRoutes');
 const app = express();
 const PORT = process.env.PORT || 8083;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Connection
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://admin:admin123@localhost:27017/comments_db?authSource=admin';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://admin:admin123@mongo-comment:27017/comments_db?authSource=admin';
 
-mongoose.connect(MONGO_URI)
-    .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.error('MongoDB connection error:', err));
+// Connect with retry
+const connectWithRetry = () => {
+    mongoose.connect(MONGO_URI)
+        .then(() => console.log('Connected to MongoDB'))
+        .catch(err => {
+            console.error('MongoDB connection error:', err.message);
+            setTimeout(connectWithRetry, 5000);
+        });
+};
 
-// Routes
+connectWithRetry();
+
 app.use('/api/comments', commentRoutes);
 
-// Health Check
 app.get('/health', (req, res) => {
-    res.json({ status: 'UP', service: 'Comment Service' });
+    res.json({ status: 'UP', service: 'Comment Service', mongo: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected' });
 });
 
 app.listen(PORT, () => {
