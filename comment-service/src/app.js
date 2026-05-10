@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB Connection
-const MONGO_URI = 'mongodb://admin:admin123@localhost:27017/comments_db?authSource=admin';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://admin:admin123@localhost:27017/comments_db?authSource=admin';
 
 mongoose.connect(MONGO_URI)
     .then(() => console.log('Connected to MongoDB'))
