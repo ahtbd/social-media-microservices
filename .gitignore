@@ -1,0 +1,44 @@
+# Compiled class files
+*.class
+*.jar
+*.war
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+*.swp
+*~
+
+# Logs
+logs/
+*.log
+
+# Environment files
+.env
+application-local.properties
+application-local.yml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node modules
+node_modules/
+package-lock.json
+
+# Docker
+.docker/
+
+# Test reports
+surefire-reports/
+coverage/
+
+# Temporary files
+*.tmp
+*.bak

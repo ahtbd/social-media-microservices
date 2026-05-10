@@ -1,0 +1,88 @@
+
+services:
+
+  postgres-user:
+    image: postgres:16-alpine
+    container_name: users-db
+    environment:
+      POSTGRES_DB: users_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5432:5432"
+    volumes:
+      - users-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d users_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - social-network
+
+  postgres-post:
+    image: postgres:16-alpine
+    container_name: posts-db
+    environment:
+      POSTGRES_DB: posts_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5433:5432"
+    volumes:
+      - posts-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d posts_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - social-network
+
+  mongo-comment:
+    image: mongo:7
+    container_name: comments-db
+    environment:
+      MONGO_INITDB_DATABASE: comments_db
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+    ports:
+      - "27017:27017"
+    volumes:
+      - comments-data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - social-network
+
+  postgres-like:
+    image: postgres:16-alpine
+    container_name: likes-db
+    environment:
+      POSTGRES_DB: likes_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5434:5432"
+    volumes:
+      - likes-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d likes_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - social-network
+
+volumes:
+  users-data:
+  posts-data:
+  comments-data:
+  likes-data:
+
+networks:
+  social-network:
+    driver: bridge
